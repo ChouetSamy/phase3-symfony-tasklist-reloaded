@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello DashboardController!
+{% endblock %}
+
+{% block body %}
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+	</style>
+
+	<aside>
+		<div class="bg-black-600 text-color-w-300">
+			<div class"house fav-icon">
+				<a href="{{ path('app_task_index') }}">Toutes les tâches</a>
+			</div>
+		</div>
+		<h3>DOSSIERS</h3>
+		{% for folder in folders %}
+			<div class="folder fav-icon">
+				<button onclick="">
+					<h4>{{folder.name}}</h4>
+				</button>
+			</div>
+		{% endfor %}
+	</aside>
+	<div>
+		<div class="header">
+			<div>
+				<h2>Gestion de Tâches</h2>
+				<p>Organisez votre journée efficacement</p>
+			</div>
+		</div>
+	</div>
+{% endblock %}
