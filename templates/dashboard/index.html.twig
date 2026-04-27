@@ -1,43 +1,131 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello DashboardController!
-{% endblock %}
-
 {% block body %}
-	<style>
-		.example-wrapper {
-			margin: 1em auto;
-			max-width: 800px;
-			width: 95%;
-			font: 18px / 1.5 sans-serif;
-		}
-		.example-wrapper code {
-			background: #F5F5F5;
-			padding: 2px 6px;
-		}
-	</style>
 
-	<aside>
-		<div class="bg-black-600 text-color-w-300">
-			<div class"house fav-icon">
-				<a href="{{ path('app_task_index') }}">Toutes les tâches</a>
-			</div>
-		</div>
-		<h3>DOSSIERS</h3>
+<div class="flex min-h-screen bg-gray-100">
+
+
+	<aside class="w-64 bg-white p-4 shadow">
+
+		<a href="{{ path('app_task_index') }}" class="block p-2 rounded bg-gray-900 text-white mb-4">
+			🏠 Toutes les tâches
+		</a>
+
+		<h3 class="text-sm text-gray-500">DOSSIERS</h3>
+
 		{% for folder in folders %}
-			<div class="folder fav-icon">
-				<button onclick="">
-					<h4>{{folder.name}}</h4>
-				</button>
-			</div>
+		<a href="{{ path('app_dashboard', { folder: folder.id }) }}" class="block p-2 mt-2 rounded
+																																																												               {% if currentFolder and currentFolder.id == folder.id %}
+																																																												                   bg-gray-300
+																																																												               {% endif %}">
+			📁
+			{{ folder.name }}
+		</a>
 		{% endfor %}
+
 	</aside>
-	<div>
-		<div class="header">
+
+
+	<main class="flex-1 p-8">
+
+
+		<div class="flex justify-between items-center mb-6">
+
 			<div>
-				<h2>Gestion de Tâches</h2>
-				<p>Organisez votre journée efficacement</p>
+				<h1 class="text-2xl font-bold">Gestion de Tâches</h1>
+				<p class="text-gray-500 text-sm">Organisez votre journée efficacement</p>
+			</div>
+
+			<div class="flex gap-3">
+
+				<a href="{{ path('app_priority_index')}}" class="px-3 py-2 bg-gray-200 rounded">
+					⚙️ Gérer les priorités
+				</a>
+
+				<a href="{{ path('app_folder_new')}}" class="px-3 py-2 bg-gray-200 rounded">
+					📁 Nouveau dossier
+				</a>
+
+				<a href="{{ path('app_task_new')}}" class="px-3 py-2 bg-black text-white rounded">
+					➕ Nouvelle tâche
+				</a>
+
+				<a href="{{ path('app_logout')}}" class="px-3 py-2 bg-gray-200 rounded">
+					🚪 Déconnexion
+				</a>
+
 			</div>
 		</div>
-	</div>
+
+		<div class="flex gap-4 mb-6 bg-white p-4 rounded shadow">
+			<form method="get" class="flex gap-4 mb-6 bg-white p-4 rounded shadow">
+
+				<div>
+					Statut :
+					<select name="status" onchange="this.form.submit()" class="border p-1 rounded">
+
+						<option value="">Tous</option>
+
+						<option value="pending" {% if app.request.query.get('status')=='pending' %} selected {% endif
+							%}>
+							En cours
+						</option>
+
+						<option value="completed" {% if app.request.query.get('status')=='completed' %} selected {%
+							endif %}>
+							Completé
+						</option>
+
+						<option value="archived" {% if app.request.query.get('status')=='archived' %} selected {% endif
+							%}>
+							Archivé
+						</option>
+
+					</select>
+				</div>
+
+
+				<div>
+					Priorité :
+					<select name="priority" onchange="this.form.submit()" class="border p-1 rounded">
+
+						<option value="">Toutes</option>
+
+						{% for priority in priorities %}
+						<option value="{{ priority.id }}" {% if app.request.query.get('priority')==priority.id|striptags
+							%} selected {% endif %}>
+							{{ priority.name }}
+						</option>
+						{% endfor %}
+
+					</select>
+				</div>
+
+			</form>
+
+		</div>
+		<div class="flex flex-col gap-4">
+			<div class="space-y-4">
+				<p>📌 Epinglé</p>
+				{% for task in pinned %}
+				{{ include('dashboard/taskcard.html.twig', {task: task}) }}
+				{% endfor %}
+			</div>
+			<div class="border-t border-dotted border border-black/25 w-full"></div>
+			<div class="space-y-4">
+				{% for task in notPinned %}
+				{{ include('dashboard/taskcard.html.twig', {task: task}) }}
+				{% endfor %}
+			</div>
+			<div class="space-y-4">
+				<p>🗃️ Archivé</p>
+				{% for task in archived %}
+				{{ include('dashboard/taskcard.html.twig', {task: task}) }}
+				{% endfor %}
+			</div>
+		</div>
+	</main>
+
+</div>
+
 {% endblock %}

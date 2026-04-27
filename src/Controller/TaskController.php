@@ -71,11 +71,21 @@ final class TaskController extends AbstractController
     #[Route('/{id}', name: 'app_task_delete', methods: ['POST'])]
     public function delete(Request $request, Task $task, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$task->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $task->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($task);
             $entityManager->flush();
         }
 
         return $this->redirectToRoute('app_task_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/task/{id}/pin', name: 'app_task_pin')]
+    public function togglePin(Task $task, EntityManagerInterface $em): Response
+    {
+        $task->setIsPinned(!$task->isPinned());
+
+        $em->flush();
+
+        return $this->redirectToRoute('app_task_index');
     }
 }
